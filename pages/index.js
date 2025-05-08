@@ -51,7 +51,7 @@ const Login = () => {
             <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
                 <Stack direction={"column"} sx={{ width: '100%', maxWidth: '400px', mx: 'auto' }}>
                     <Stack mb={3} direction={"column"} justifyContent={"center"} alignItems={"center"} spacing={1} >
-                        <img src="/logo.png" alt="" style={{ width: "100px" }} />
+                        <img src="/maslogo.png" alt="" style={{ width: "100px" }} />
                         <Typography variant="h6" className='bold' sx={{  color: 'primary.main' }}>
                         MAS Content Management System
                         </Typography>

@@ -1,11 +1,12 @@
 import React from 'react'
 import CrmLayout from './components/CrmLayout'
+import TextEditor from './components/TextEditor'
 
 function home() {
     return (
         <div>
             <CrmLayout>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo iste sed exercitationem tenetur sint amet veritatis similique quos, dolorum, ad, repellendus ipsa fugit eaque assumenda culpa laborum nam nobis perspiciatis?
+               <TextEditor/>
             </CrmLayout>
 
         </div>
