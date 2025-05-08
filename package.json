@@ -1,0 +1,21 @@
+{
+  "name": "mas_cms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.11",
+    "@mui/material": "^6.4.11",
+    "axios": "^1.9.0",
+    "next": "13.5.11",
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}
