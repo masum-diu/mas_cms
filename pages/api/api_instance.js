@@ -1,8 +1,8 @@
 import axios from "axios";
 const instance = axios.create({
-  baseURL: "https://api.ryserved.com/api",
+  baseURL: "https://msb.etherstaging.xyz/api",
 
-  headers: { 
+  headers: {
     "Content-Type": "application/json",
     timeout: 1000,
   },

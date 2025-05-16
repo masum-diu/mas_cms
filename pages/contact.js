@@ -1,12 +1,17 @@
-import React from 'react'
-import CrmLayout from './components/CrmLayout'
+import React from "react";
+import CrmLayout from "./components/CrmLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function contact() {
-    return (
-        <CrmLayout>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo iste sed exercitationem tenetur sint amet veritatis similique quos, dolorum, ad, repellendus ipsa fugit eaque assumenda culpa laborum nam nobis perspiciatis?
-        </CrmLayout>
-    )
+  return (
+    // <ProtectedRoute>
+      <CrmLayout>
+        <h1>Contact Us</h1>
+        <p>If you have any questions, feel free to reach out!</p>
+        <p>Email:</p>
+      </CrmLayout>
+    // </ProtectedRoute>
+  );
 }
 
-export default contact
+export default contact;
