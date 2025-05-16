@@ -79,6 +79,7 @@ function SectionTwo() {
         <CircularProgress />
       ) : (
         <>
+          <h3>Section Two :</h3>
           <Box mb={3} display="flex" justifyContent="space-between">
             <Typography variant="h4" className="Medium">
               {sectionData?.title}
