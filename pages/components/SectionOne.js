@@ -13,8 +13,10 @@ import {
   IconButton,
   CircularProgress,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import instance from "../api/api_instance";
+import TextEditor from "./TextEditor";
 
 function SectionOne() {
   const [sectionData, setSectionData] = useState(null);
@@ -52,6 +54,9 @@ function SectionOne() {
       [name]: value,
     }));
   };
+  const handleChange1 = (value) => {
+    setFormData(prev => ({ ...prev, description: value }));
+  };
 
   const handleSectionChange = (index, field, value) => {
     const updatedSections = [...formData.sections];
@@ -65,7 +70,7 @@ function SectionOne() {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await instance.put(
+      const res = await instance.post(
         `/section-one/${sectionData.id}`,
         formData,
         {
@@ -74,7 +79,7 @@ function SectionOne() {
           },
         }
       );
-      console.log("Updated:", res.data);
+      // console.log("Updated:", res.data);
       fetchSectionOne();
       setOpen(false);
     } catch (err) {
@@ -96,9 +101,13 @@ function SectionOne() {
         <Typography variant="h5" className="Medium" gutterBottom>
           {sectionData.title}
         </Typography>
-        <Typography variant="body1" className="light" gutterBottom>
-          {sectionData.description}
-        </Typography>
+        <Typography
+          variant="body1"
+          className="light"
+          paragraph
+          dangerouslySetInnerHTML={{ __html: sectionData?.description }}
+        />
+
 
         <Grid container spacing={2} mt={2}>
           {sectionData.sections.map((item, index) => (
@@ -114,16 +123,18 @@ function SectionOne() {
             </Grid>
           ))}
         </Grid>
-
-        <Button
-          variant="contained"
-          className="Medium"
-          color="background2"
-          sx={{ mt: 3, textTransform: "capitalize" }}
-          onClick={() => setOpen(true)}
-        >
-          Edit Section One
-        </Button>
+        <Stack direction={"row"} justifyContent="flex-end" >
+          <Button
+            variant="contained"
+            className="Medium"
+            color="background2"
+            startIcon={<EditIcon />}
+            sx={{ mt: 3, textTransform: "capitalize" }}
+            onClick={() => setOpen(true)}
+          >
+            Edit Section One
+          </Button>
+        </Stack>
       </Box>
 
       {/* Edit Modal */}
@@ -153,7 +164,7 @@ function SectionOne() {
               onChange={handleChange}
               fullWidth
             />
-            <TextField
+            {/* <TextField
               name="description"
               label="Description"
               multiline
@@ -161,7 +172,9 @@ function SectionOne() {
               value={formData.description}
               onChange={handleChange}
               fullWidth
-            />
+            /> */}
+            <TextEditor value={formData.description}
+              onChange={handleChange1} />
             <Typography variant="h6">Sections:</Typography>
             {formData.sections.map((sec, index) => (
               <Stack key={index} spacing={1}>
