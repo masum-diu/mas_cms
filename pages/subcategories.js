@@ -1,11 +1,16 @@
 import React from 'react'
 import CrmLayout from './components/CrmLayout'
+import SubCategories from './components/SubCategories'
+import { Box } from '@mui/material'
 
 function subcategories() {
   return (
     <CrmLayout>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Illo iste sed exercitationem tenetur sint amet veritatis similique quos, dolorum, ad, repellendus ipsa fugit eaque assumenda culpa laborum nam nobis perspiciatis?
-            </CrmLayout>
+      <Box py={2} >
+        <SubCategories />
+      </Box>
+     
+    </CrmLayout>
   )
 }
 
