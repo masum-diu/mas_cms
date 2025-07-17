@@ -20,13 +20,13 @@ export function AuthProvider({ children }) {
   const login = (token) => {
     localStorage.setItem("token", token);
     setUser({ token });
-    router.push("/home");
+    router.push("/");
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    setUser(null);
     router.push("/");
+    setUser(null);
   };
 
   return (

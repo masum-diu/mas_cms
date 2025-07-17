@@ -2,7 +2,7 @@ import React from "react";
 import CrmLayout from "./components/CrmLayout";
 import AboutSection from "./components/AboutSection";
 
-const about = () => {
+const AboutPage  = () => {
   return (
     // <ProtectedRoute>
       <CrmLayout>
@@ -12,4 +12,4 @@ const about = () => {
   );
 };
 
-export default about;
+export default AboutPage;

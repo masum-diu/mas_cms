@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import instance from "../api/api_instance";
 
-function Colors() {
+function Sizes() {
     const [loading, setLoading] = useState(false);
     const [slidersupdateid, setSlidersUpdateId] = useState("");
     const [deletesId, setDeletesId] = useState("");
@@ -31,8 +31,6 @@ function Colors() {
 
     const [formData, setFormData] = useState({
         name: "",
-        image: null,
-        code: "",
     });
 
 
@@ -41,8 +39,6 @@ function Colors() {
         setSlidersUpdateId(item.id);
         setFormData({
             name: item.name,
-            image: item.image,
-            code: item.code,
 
         });
 
@@ -84,7 +80,7 @@ function Colors() {
     const sliderFatching = async () => {
         setLoading(true);
         try {
-            const response = await instance.get("/colors");
+            const response = await instance.get("/sizes");
             setSliderFatch(response?.data?.data);
         } catch (error) {
             console.error("Fetch failed:", error);
@@ -100,20 +96,17 @@ function Colors() {
 
             const form = new FormData();
             form.append("name", formData.name);
-            form.append("code", formData.code);
-            if (formData.image instanceof File) {
-                form.append("image", formData.image);
-            }
+           
             const url = isEditMode
-                ? `/colors/${slidersupdateid}`
-                : "/colors";
+                ? `/sizes/${slidersupdateid}`
+                : "/sizes";
 
             const method = "post"; // both add and edit use POST
 
             await instance[method](url, form, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
+                   
                 },
             });
 
@@ -128,7 +121,7 @@ function Colors() {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem("token");
-            const url = `/colors/${deletesId}`;
+            const url = `/sizes/${deletesId}`;
 
             await instance.delete(url, {
                 headers: {
@@ -147,7 +140,7 @@ function Colors() {
 
     const handleCloseDialog = () => {
         setOpen(false);
-        setFormData({ name: "", code: "" });
+        setFormData({ name: ""});
         setIsEditMode(false);
         setSlidersUpdateId("");
     };
@@ -165,7 +158,7 @@ function Colors() {
             ) : (
                 <>
                     <Stack direction={"row"} justifyContent="space-between" alignItems="center" mb={2}>
-                        <h3>Colors Section :</h3>
+                        <h3>Sizes Section :</h3>
                         <Button
                             variant="contained"
                             className="Medium"
@@ -173,7 +166,7 @@ function Colors() {
                             onClick={handleAdd}
                             color="background2"
                         >
-                            Add Color
+                            Add Size
                         </Button>
                     </Stack>
 
@@ -187,7 +180,7 @@ function Colors() {
                                         // height: 400,
                                         position: "relative",
                                         overflow: "hidden",
-                                        backgroundColor: item.code,
+                                        backgroundColor: "#073064",
                                     }}
                                 >
                                     {/* <img
@@ -209,7 +202,7 @@ function Colors() {
                                             // height: 50,    
                                         }}
                                     >
-                                        <Typography className="bold" variant="h6" fontSize={18} color={item.code === "#FFFFFF" || item.code === "#FFFF00" || item.code === "#FAEBD7" ? "#000" : "#fff"}>
+                                        <Typography className="bold" variant="h6" fontSize={18} color={"#FFF"} >
                                             {item.name}
                                           </Typography>
                                     </Box>
@@ -276,16 +269,7 @@ function Colors() {
                             placeholder="Enter your name"
                             fullWidth
                         />
-                        <TextField
-                            label="Code"
-                            name="code"
-                            value={formData.code}
-                            onChange={handleInputChange}
-                            placeholder="Enter your code"
-                            fullWidth
-                        />
-
-
+                       
 
                         <Button
                             variant="contained"
@@ -314,7 +298,7 @@ function Colors() {
             >
                 <DialogContent>
                     <Typography variant="h6" gutterBottom className="bold" >
-                        Are you sure you want to delete this Color?
+                        Are you sure you want to delete this Size?
                     </Typography>
                     <Stack direction="row" justifyContent="flex-end" spacing={2} mt={3}>
                         <Button
@@ -339,4 +323,4 @@ function Colors() {
     );
 }
 
-export default Colors;
+export default Sizes;

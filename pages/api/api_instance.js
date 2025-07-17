@@ -1,6 +1,7 @@
 import axios from "axios";
 const instance = axios.create({
-  baseURL: "https://msb.etherstaging.xyz/api",
+  baseURL: "https://tst.etherstaging.xyz/api",
+  // baseURL: "https://msb.etherstaging.xyz/api",
 
   headers: {
     "Content-Type": "application/json",

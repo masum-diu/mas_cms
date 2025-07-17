@@ -18,8 +18,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import instance from "../api/api_instance";
+import TextEditor from "./TextEditor";
 
-function Colors() {
+function Tags() {
     const [loading, setLoading] = useState(false);
     const [slidersupdateid, setSlidersUpdateId] = useState("");
     const [deletesId, setDeletesId] = useState("");
@@ -31,8 +32,7 @@ function Colors() {
 
     const [formData, setFormData] = useState({
         name: "",
-        image: null,
-        code: "",
+        description: "",
     });
 
 
@@ -41,9 +41,7 @@ function Colors() {
         setSlidersUpdateId(item.id);
         setFormData({
             name: item.name,
-            image: item.image,
-            code: item.code,
-
+            description: item.description,
         });
 
         setOpen(true);
@@ -71,20 +69,15 @@ function Colors() {
         }));
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        setFormData((prev) => ({
-            ...prev,
-            image: file,
-        }));
+
+    const handleChange1 = (value) => {
+        setFormData((prev) => ({ ...prev, description: value }));
     };
-
-
 
     const sliderFatching = async () => {
         setLoading(true);
         try {
-            const response = await instance.get("/colors");
+            const response = await instance.get("/tags");
             setSliderFatch(response?.data?.data);
         } catch (error) {
             console.error("Fetch failed:", error);
@@ -100,20 +93,17 @@ function Colors() {
 
             const form = new FormData();
             form.append("name", formData.name);
-            form.append("code", formData.code);
-            if (formData.image instanceof File) {
-                form.append("image", formData.image);
-            }
+            form.append("description", formData.description);
             const url = isEditMode
-                ? `/colors/${slidersupdateid}`
-                : "/colors";
+                ? `/tags/${slidersupdateid}`
+                : "/tags";
 
             const method = "post"; // both add and edit use POST
 
             await instance[method](url, form, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
+
                 },
             });
 
@@ -128,7 +118,7 @@ function Colors() {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem("token");
-            const url = `/colors/${deletesId}`;
+            const url = `/tags/${deletesId}`;
 
             await instance.delete(url, {
                 headers: {
@@ -147,7 +137,7 @@ function Colors() {
 
     const handleCloseDialog = () => {
         setOpen(false);
-        setFormData({ name: "", code: "" });
+        setFormData({ name: "" });
         setIsEditMode(false);
         setSlidersUpdateId("");
     };
@@ -165,7 +155,7 @@ function Colors() {
             ) : (
                 <>
                     <Stack direction={"row"} justifyContent="space-between" alignItems="center" mb={2}>
-                        <h3>Colors Section :</h3>
+                        <h3>Tags Section :</h3>
                         <Button
                             variant="contained"
                             className="Medium"
@@ -173,7 +163,7 @@ function Colors() {
                             onClick={handleAdd}
                             color="background2"
                         >
-                            Add Color
+                            Add Tag
                         </Button>
                     </Stack>
 
@@ -183,68 +173,53 @@ function Colors() {
                                 <Paper
                                     elevation={3}
                                     sx={{
-                                        p: 2,
-                                        // height: 400,
-                                        position: "relative",
-                                        overflow: "hidden",
-                                        backgroundColor: item.code,
+                                        padding: 2,
+                                        borderRadius: 2,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        height: "100%",
+                                        justifyContent: "space-between",
                                     }}
                                 >
-                                    {/* <img
-                                        src={item?.image}
-                                        alt=""
-                                        width={"100%"}
-                                        height={"100%"}
-                                        style={{ borderRadius: 5, objectFit: "cover" }}
-                                    /> */}
-                                    <Box
-                                        sx={{
-                                            // position: "absolute",
-                                            // bottom: 0,
-                                            // left: 0,
-                                            // right: 0,
-                                            color: "#000",
-                                            padding: 3,
-                                            textAlign: "center",
-                                            // height: 50,    
-                                        }}
-                                    >
-                                        <Typography className="bold" variant="h6" fontSize={18} color={item.code === "#FFFFFF" || item.code === "#FFFF00" || item.code === "#FAEBD7" ? "#000" : "#fff"}>
+                                    <Box>
+                                        <Typography variant="h6" fontWeight="bold">
                                             {item.name}
-                                          </Typography>
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            mt={1}
+                                            sx={{ whiteSpace: "pre-line" }}
+                                        >
+                                            {item.description?.replace(/<[^>]+>/g, "")}
+                                        </Typography>
                                     </Box>
+
+                                    <Stack direction="row" spacing={1} mt={2} justifyContent="flex-end">
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="background2"
+                                            className="Medium"
+                                            startIcon={<EditIcon />}
+                                            onClick={() => handleEdit(item)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="background4"
+                                            className="Medium"
+                                            startIcon={<DeleteIcon />}
+                                            onClick={() => handleDeletes(item)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Stack>
                                 </Paper>
-                                <Stack
-                                    mt={2}
-                                    direction={"row"}
-                                    spacing={1}
-                                    justifyContent={"flex-end"}
-                                    alignItems={"center"}
-                                >
-                                    <Button
-                                        className="Medium"
-                                        size="small"
-                                        variant="contained"
-                                        color="background2"
-                                        sx={{ textTransform: "capitalize" }}
-                                        startIcon={<EditIcon />}
-                                        onClick={() => handleEdit(item)}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        className="Medium"
-                                        size="small"
-                                        variant="contained"
-                                        color="background4"
-                                        sx={{ textTransform: "capitalize" }}
-                                        startIcon={<DeleteIcon />}
-                                        onClick={() => handleDeletes(item)}
-                                    >
-                                        Delete
-                                    </Button>
-                                </Stack>
                             </Grid>
+
                         ))}
                     </Grid>
                 </>
@@ -276,17 +251,11 @@ function Colors() {
                             placeholder="Enter your name"
                             fullWidth
                         />
-                        <TextField
-                            label="Code"
-                            name="code"
-                            value={formData.code}
-                            onChange={handleInputChange}
-                            placeholder="Enter your code"
-                            fullWidth
+
+                        <TextEditor
+                            value={formData.description}
+                            onChange={handleChange1}
                         />
-
-
-
                         <Button
                             variant="contained"
                             color="background2"
@@ -314,7 +283,7 @@ function Colors() {
             >
                 <DialogContent>
                     <Typography variant="h6" gutterBottom className="bold" >
-                        Are you sure you want to delete this Color?
+                        Are you sure you want to delete this Tag?
                     </Typography>
                     <Stack direction="row" justifyContent="flex-end" spacing={2} mt={3}>
                         <Button
@@ -339,4 +308,4 @@ function Colors() {
     );
 }
 
-export default Colors;
+export default Tags;

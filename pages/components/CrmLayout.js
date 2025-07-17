@@ -11,7 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
+  ListItemIcon, Avatar,
 } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
@@ -30,6 +30,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import { useState } from "react";
 import ProtectedRoute from "./ProtectedRoute";
+import { useAuth } from "../../contexts/AuthContext";
 
 const menuItems = [
   { id: "home", icon: <HomeIcon />, text: "Home" },
@@ -39,13 +40,14 @@ const menuItems = [
   { id: "subcategories", icon: <WidgetsIcon />, text: "Subcategories" },
   { id: "colors", icon: <PaletteIcon />, text: "Colors" },
   { id: "sizes", icon: <StraightenIcon />, text: "Sizes" },
-  { id: "tags", icon: <LocalOfferIcon />, text: "Tags" },
-  { id: "sizeGuide", icon: <RuleIcon />, text: "Size Guide" },
+  // { id: "tags", icon: <LocalOfferIcon />, text: "Tags" },
+  // { id: "sizeGuide", icon: <RuleIcon />, text: "Size Guide" },
   { id: "product", icon: <ShoppingBasketIcon />, text: "Product" },
-  { id: "productLists", icon: <ListAltIcon />, text: "Product Lists" },
+  { id: "productImage", icon: <ListAltIcon />, text: "Product img" },
 ];
 
 const CrmLayout = ({ children }) => {
+  const { logout } = useAuth(); // Uncomment if using context
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
@@ -59,12 +61,12 @@ const CrmLayout = ({ children }) => {
   };
 
   const handleSignOut = () => {
-    // signOut(); // Uncomment if using context
-    console.log("Signed out");
+     logout(); // Uncomment if using context
+    // console.log("Signed out");
   };
 
   const handleItemClick = (id) => {
-    console.log(id);
+    // console.log(id);
     router.push(`/${id}`);
   };
 
@@ -195,11 +197,12 @@ const CrmLayout = ({ children }) => {
                       onClick={handleMenu}
                       color="inherit"
                     >
-                      <img
+                      <Avatar variant="circular"  alt="Expand"
+                        width={20} src=""  />
+                      {/* <img
                         src="/assets/angle-circle-right.png"
-                        alt="Expand"
-                        width={20}
-                      />
+                       
+                      /> */}
                     </IconButton>
                     <Menu
                       anchorEl={anchorEl}
