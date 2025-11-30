@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 import {
   Box,
   Stack,
@@ -26,11 +27,14 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await instance.post("/login", { email, password });
-      //   console.log("Login response:", response);
-      router.push("/home");
-      localStorage.setItem("token", response?.data?.token);
+      // console.log("Login response:", response);
+      if (response.status === 200) {
+        localStorage.setItem("token", response?.data?.token);
+        toast.success("Login successful!");
+        router.push("/home");
+      }
     } catch (error) {
-      // toast.error('Login failed. Please try again.');
+      toast.error(error?.response?.data?.message || "Login failed. Please try again.");
       console.error("Authentication failed:", error);
     } finally {
       setLoading(false);

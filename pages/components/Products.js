@@ -37,6 +37,7 @@ function Products() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
     const [sliderFatch, setSliderFatch] = useState([]);
+    console.log(sliderFatch, "sliderFatch")
     const [updating, setUpdating] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [viewProductOpen, setViewProductOpen] = useState(false);
@@ -430,7 +431,8 @@ function Products() {
                                 >
                                     <Box>
                                         <img
-                                            src={item?.productImages[0]?.image}
+                                            src={item?.product_images
+                                            [0]?.image}
                                             alt={item.name || "Product Image"}
                                             loading="lazy"
                                             style={{ width: "100%", borderRadius: 5 }}

@@ -34,6 +34,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const menuItems = [
   { id: "home", icon: <HomeIcon />, text: "Home" },
+  { id: "sustainability", icon: <InfoIcon />, text: "Sustainability" },
   { id: "about", icon: <InfoIcon />, text: "About" },
   { id: "contact", icon: <ContactMailIcon />, text: "Contact" },
   { id: "categories", icon: <CategoryIcon />, text: "Categories" },
