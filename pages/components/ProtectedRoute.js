@@ -4,14 +4,17 @@ import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
+    // Wait until auth initialization completes before redirecting
+    if (!initializing && !user) {
       router.push("/");
     }
-  }, [user, router]);
+  }, [user, router, initializing]);
+
+  if (initializing) return null;
 
   return user ? children : null;
 }

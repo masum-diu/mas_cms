@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import { useAuth } from "../contexts/AuthContext";
 import {
   Box,
   Stack,
@@ -21,6 +22,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +31,8 @@ const Login = () => {
       const response = await instance.post("/login", { email, password });
       // console.log("Login response:", response);
       if (response.status === 200) {
-        localStorage.setItem("token", response?.data?.token);
+        // use AuthContext to store token and update auth state
+        login(response?.data?.token);
         toast.success("Login successful!");
         router.push("/home");
       }

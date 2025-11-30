@@ -108,7 +108,7 @@ function Categories() {
             ) : (
                 <>
                     <h3>Categories Section :</h3>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} my={2}>
                         {sliderFatch?.map((item, index) => (
                             <Grid item xs={12} md={6} key={index}>
                                 <Paper

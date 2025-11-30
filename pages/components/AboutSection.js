@@ -120,7 +120,7 @@ function AboutSection() {
                     </Grid>
                 </Grid>
 
-                <Stack direction={"row"} justifyContent="flex-end">
+                <Stack direction={"row"} justifyContent="flex-end" mb={2}>
                     <Button
                         variant="contained"
                         className="Medium"
