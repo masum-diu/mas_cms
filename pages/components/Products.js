@@ -46,7 +46,7 @@ function Products() {
     const [colorsFatch, setcolorsFatch] = useState([]);
     const [categoriesFatch, setCategoriesFatch] = useState([]);
     const [subCategoriesFatch, setSubCategoriesFatch] = useState([]);
-    const [selectedCate, setSelectedCate] = useState(2);
+    const [selectedCate, setSelectedCate] = useState("all");
 
     const [formData, setFormData] = useState({
         name: "",
@@ -137,19 +137,19 @@ function Products() {
         setIsEditMode(true);
         setSlidersUpdateId(item.id);
         setFormData({
-            category_id: item.category.id,
-            sub_category_id: item.subCategory.id,
-            fit: item.fit,
-            care: item.care,
-            price: item.price,
-            name: item.name,
-            description: item.description,
-            tags: item.tags.length > 0 ? item.tags : [{ name: '', description: '' }],
+            category_id: item.category?.id || "",
+            sub_category_id: item.subCategory?.id || "",
+            fit: item.fit || "",
+            care: item.care || "",
+            price: item.price || "",
+            name: item.name || "",
+            description: item.description || "",
+            tags: item.tags?.length > 0 ? item.tags : [{ name: '', description: '' }],
             size_guides: item.sizeGuides || [{ name: "", chest: "", body: "" }],
             availability: item.availability || [{ size_id: "", color_id: "", quantity: 0 }],
         });
 
-        handlesubcartegory(item.category.id); // Fetch subcategories for the selected category
+        handlesubcartegory(item.category?.id); // Fetch subcategories for the selected category
         setOpen(true);
     };
 
@@ -211,7 +211,8 @@ function Products() {
     const sliderFatching = async () => {
         setLoading(true);
         try {
-            const response = await instance.get(`/product?category=${selectedCate}`);
+            const url = selectedCate === "all" ? "/product" : `/product?category=${selectedCate}`;
+            const response = await instance.get(url);
             setSliderFatch(response?.data?.data);
         } catch (error) {
             console.error("Fetch failed:", error);
@@ -395,6 +396,20 @@ function Products() {
                     </Stack>
                     <Stack direction={"row"} spacing={1} py={2}>
                         <ButtonGroup variant="contained" color="primary">
+                            <Button
+                                className="Medium"
+                                onClick={() => handleSeletewizeData("all")}
+                                aria-label="All Products"
+                                sx={{
+                                    textTransform: 'capitalize',
+                                    backgroundColor: selectedCate === "all" ? 'background2.main' : 'primary.main',
+                                    '&:hover, &:focus, &:active': {
+                                        backgroundColor: selectedCate === "all" ? 'background2.main' : 'primary.main'
+                                    }
+                                }}
+                            >
+                                All Products
+                            </Button>
                             {categoriesFatch?.slice()?.reverse()?.map((catsList, index) => (
                                 <Button
                                     className="Medium"
@@ -415,6 +430,19 @@ function Products() {
                         </ButtonGroup>
                     </Stack>
 
+                    {/* Category Header */}
+                    <Box sx={{ mb: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+                        <Typography variant="h6" className="Medium">
+                            {selectedCate === "all" 
+                                ? "All Products" 
+                                : `Products in ${categoriesFatch?.find(cat => cat.id === selectedCate)?.name || 'Selected Category'}`
+                            }
+                            <Typography variant="body2" color="text.secondary" component="span" sx={{ ml: 1 }}>
+                                ({sliderFatch?.length || 0} products)
+                            </Typography>
+                        </Typography>
+                    </Box>
+
                     <Grid container spacing={2}>
                         {sliderFatch?.map((item, index) => (
                             <Grid item xs={12} md={4} lg={4} xl={3} key={index}>
@@ -431,15 +459,30 @@ function Products() {
                                 >
                                     <Box>
                                         <img
-                                            src={item?.product_images
-                                            [0]?.image}
+                                            src={item?.productImages?.[0]?.image || "/placeholder-image.jpg"}
                                             alt={item.name || "Product Image"}
                                             loading="lazy"
                                             style={{ width: "100%", borderRadius: 5 }}
                                         />
-                                        <Typography variant="h6" fontWeight="bold">
-                                            {item.name}
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                                            <Typography variant="h6" fontWeight="bold">
+                                                {item.name}
+                                            </Typography>
+                                            <Typography 
+                                                variant="caption" 
+                                                sx={{ 
+                                                    backgroundColor: item.category?.name?.toLowerCase() === 'wholesale' ? '#4caf50' : '#2196f3',
+                                                    color: 'white',
+                                                    px: 1,
+                                                    py: 0.5,
+                                                    borderRadius: 1,
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: 'bold'
+                                                }}
+                                            >
+                                                {item.category?.name || 'Unknown'}
+                                            </Typography>
+                                        </Box>
                                         <Typography
                                             variant="body2"
                                             color="text.secondary"
