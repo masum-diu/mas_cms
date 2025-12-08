@@ -19,6 +19,7 @@ import {
     Table,
     TableContainer,
     TableBody, ButtonGroup,
+    Switch,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -37,7 +38,7 @@ function Products() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [open, setOpen] = useState(false);
     const [sliderFatch, setSliderFatch] = useState([]);
-    // console.log(sliderFatch, "sliderFatch")
+     console.log(sliderFatch, "sliderFatch")
     const [updating, setUpdating] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [viewProductOpen, setViewProductOpen] = useState(false);
@@ -59,7 +60,9 @@ function Products() {
         tags: [{ name: '', description: '' }],
         size_guides: [{ name: "", chest: "", body: "" }],
         availability: [{ size_id: "", color_id: "", quantity: 0 }],
+        isNew: true,
     });
+    console.log(formData)
 
     const handleTagChange = (index, e) => {
         const { name, value } = e.target;
@@ -289,6 +292,7 @@ function Products() {
             form.append("description", formData.description);
             form.append("category_id", formData.category_id);
             form.append("sub_category_id", formData.sub_category_id);
+            form.append("isNew", formData.isNew);
 
             formData.size_guides.forEach((size, index) => {
                 form.append(`size_guides[${index}][name]`, size.name);
@@ -433,8 +437,8 @@ function Products() {
                     {/* Category Header */}
                     <Box sx={{ mb: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
                         <Typography variant="h6" className="Medium">
-                            {selectedCate === "all" 
-                                ? "All Products" 
+                            {selectedCate === "all"
+                                ? "All Products"
                                 : `Products in ${categoriesFatch?.find(cat => cat.id === selectedCate)?.name || 'Selected Category'}`
                             }
                             <Typography variant="body2" color="text.secondary" component="span" sx={{ ml: 1 }}>
@@ -468,9 +472,9 @@ function Products() {
                                             <Typography variant="h6" fontWeight="bold">
                                                 {item.name}
                                             </Typography>
-                                            <Typography 
-                                                variant="caption" 
-                                                sx={{ 
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
                                                     backgroundColor: item.category?.name?.toLowerCase() === 'wholesale' ? '#4caf50' : '#2196f3',
                                                     color: 'white',
                                                     px: 1,
@@ -783,6 +787,16 @@ function Products() {
                             >
                                 Add Size Guide
                             </Button>
+                            <Stack direction={"row"} alignItems={"center"} spacing={1}> New Arrival product  <Switch
+                                checked={formData.isNew}
+                                onChange={() =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        isNew: false, 
+                                    }))
+                                }
+                            />
+                            </Stack>
                         </Stack>
                         <Button
                             variant="contained"
