@@ -13,6 +13,10 @@ import {
     IconButton,
     Select,
     MenuItem,
+    Chip,
+    FormControl,
+    InputLabel,
+    FormHelperText,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from "@mui/icons-material/Close";
@@ -27,7 +31,7 @@ function SubCategories() {
     const [open, setOpen] = useState(false);
     const [categoriesFatch, setCategoriesFatch] = useState([]);
     const [sliderFatch, setSliderFatch] = useState([]);
-    const [categories, setCategories] = useState('');
+    const [categories, setCategories] = useState([]);
     const [updating, setUpdating] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
@@ -36,8 +40,9 @@ function SubCategories() {
         image: null,
     });
 
-    const handleChange = (event) => {
-        setCategories(event.target.value);
+    const handleCategoryChange = (event) => {
+        const value = event.target.value;
+        setCategories(typeof value === 'string' ? value.split(',') : value);
     };
 
     const handleEdit = (item) => {
@@ -47,7 +52,11 @@ function SubCategories() {
             name: item.name,
             image: item.image,
         });
-        setCategories(item.category_id);
+        // Extract category IDs from the categories array
+        const categoryIds = item.categories && item.categories.length > 0 
+            ? item.categories.map(cat => cat.id) 
+            : [];
+        setCategories(categoryIds);
         setOpen(true);
     };
     const handleDeletes = (item) => {
@@ -61,7 +70,7 @@ function SubCategories() {
             name: "",
             image: null,
         });
-        setCategories("");
+        setCategories([]);
         setOpen(true);
     };
 
@@ -112,7 +121,18 @@ function SubCategories() {
 
             const form = new FormData();
             form.append("name", formData.name);
-            form.append("category_id", categories);
+            // Append category_ids as array
+            if (Array.isArray(categories) && categories.length > 0) {
+                categories.forEach((categoryId) => {
+                    form.append("category_ids[]", categoryId);
+                });
+            } else {
+                // Fallback: if categories is not an array, convert it
+                const categoryArray = Array.isArray(categories) ? categories : [categories].filter(Boolean);
+                categoryArray.forEach((categoryId) => {
+                    form.append("category_ids[]", categoryId);
+                });
+            }
             if (formData.image instanceof File) {
                 form.append("image", formData.image);
             }
@@ -161,7 +181,7 @@ function SubCategories() {
     const handleCloseDialog = () => {
         setOpen(false);
         setFormData({ name: "", image: null });
-        setCategories("");
+        setCategories([]);
         setIsEditMode(false);
         setSlidersUpdateId("");
     };
@@ -220,11 +240,27 @@ function SubCategories() {
                                             color: "#000",
                                             padding: 3,
                                             textAlign: "left",
+                                            background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
                                         }}
                                     >
-                                        <Typography className="bold" variant="h6">
+                                        <Typography className="bold" variant="h6" sx={{ color: "#fff", mb: 1 }}>
                                             {item.name}
                                         </Typography>
+                                        {item.categories && item.categories.length > 0 && (
+                                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                                {item.categories.map((cat) => (
+                                                    <Chip
+                                                        key={cat.id}
+                                                        label={cat.name}
+                                                        size="small"
+                                                        sx={{
+                                                            backgroundColor: "rgba(255,255,255,0.9)",
+                                                            fontSize: "0.7rem",
+                                                        }}
+                                                    />
+                                                ))}
+                                            </Box>
+                                        )}
                                     </Box>
                                 </Paper>
                                 <Stack
@@ -290,20 +326,36 @@ function SubCategories() {
                             fullWidth
                         />
 
-                        <Select
-                            value={categories}
-                            onChange={handleChange}
-                            displayEmpty
-                        >
-                            <MenuItem value="" disabled>
-                                Select Category
-                            </MenuItem>
-                            {categoriesFatch?.map((category) => (
-                                <MenuItem key={category.id} value={category.id}>
-                                    {category.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
+                        <FormControl fullWidth>
+                            <InputLabel>Select Categories</InputLabel>
+                            <Select
+                                multiple
+                                value={categories}
+                                onChange={handleCategoryChange}
+                                label="Select Categories"
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => {
+                                            const category = categoriesFatch.find(cat => cat.id === value);
+                                            return (
+                                                <Chip
+                                                    key={value}
+                                                    label={category ? category.name : value}
+                                                    size="small"
+                                                />
+                                            );
+                                        })}
+                                    </Box>
+                                )}
+                            >
+                                {categoriesFatch?.map((category) => (
+                                    <MenuItem key={category.id} value={category.id}>
+                                        {category.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>You can select multiple categories</FormHelperText>
+                        </FormControl>
 
                         <TextField type="file" name="image" onChange={handleFileChange} />
 

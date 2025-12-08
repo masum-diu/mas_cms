@@ -26,6 +26,7 @@ import RuleIcon from "@mui/icons-material/Rule"; // For size guide
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket"; // For product
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import SearchIcon from "@mui/icons-material/Search";
+import ArticleIcon from "@mui/icons-material/Article"; // For media coverage
 // import { useAuth } from '../authcontext/AuthContext'; // Uncomment if using context
 
 import { useState } from "react";
@@ -36,6 +37,7 @@ const menuItems = [
   { id: "home", icon: <HomeIcon />, text: "Home" },
   { id: "sustainability", icon: <InfoIcon />, text: "Sustainability" },
   { id: "about", icon: <InfoIcon />, text: "About" },
+  { id: "media-coverage", icon: <ArticleIcon />, text: "Media Coverage" },
   { id: "contact", icon: <ContactMailIcon />, text: "Contact" },
   { id: "categories", icon: <CategoryIcon />, text: "Categories" },
   { id: "subcategories", icon: <WidgetsIcon />, text: "Subcategories" },

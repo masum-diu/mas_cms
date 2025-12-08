@@ -57,6 +57,8 @@ function Products() {
         fit: "",
         care: "",
         price: "",
+        discount_price: "",
+        discount_amount: "",
         tags: [{ name: '', description: '' }],
         size_guides: [{ name: "", chest: "", body: "" }],
         availability: [{ size_id: "", color_id: "", quantity: 0 }],
@@ -139,20 +141,31 @@ function Products() {
     const handleEdit = (item) => {
         setIsEditMode(true);
         setSlidersUpdateId(item.id);
+        const categoryId = item.category?.id || "";
+        const subCategoryId = item.subCategory?.id || "";
+        
         setFormData({
-            category_id: item.category?.id || "",
-            sub_category_id: item.subCategory?.id || "",
+            category_id: categoryId,
+            sub_category_id: subCategoryId,
             fit: item.fit || "",
             care: item.care || "",
             price: item.price || "",
+            discount_price: item.discount_price || "",
+            discount_amount: item.discount_amount || "",
             name: item.name || "",
             description: item.description || "",
             tags: item.tags?.length > 0 ? item.tags : [{ name: '', description: '' }],
             size_guides: item.sizeGuides || [{ name: "", chest: "", body: "" }],
             availability: item.availability || [{ size_id: "", color_id: "", quantity: 0 }],
+            isNew: item.isNew !== undefined ? item.isNew : true,
         });
 
-        handlesubcartegory(item.category?.id); // Fetch subcategories for the selected category
+        // Fetch subcategories for the selected category
+        if (categoryId) {
+            handlesubcartegory(categoryId);
+        } else {
+            setSubCategoriesFatch([]);
+        }
         setOpen(true);
     };
 
@@ -185,10 +198,13 @@ function Products() {
             fit: "",
             care: "",
             price: "",
+            discount_price: "",
+            discount_amount: "",
             description: "",
             tags: [{ name: '', description: '' }],
             size_guides: [{ name: "", chest: "", body: "" }],
             availability: [{ size_id: "", color_id: "", quantity: 0 }],
+            isNew: true,
         });
         setOpen(true);
         setSubCategoriesFatch([]);
@@ -196,14 +212,20 @@ function Products() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-
-        // If category is changed, fetch subcategories
+        
+        // If category is changed, reset sub_category_id and fetch subcategories
         if (name === "category_id") {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+                sub_category_id: "", // Reset sub category when category changes
+            }));
             handlesubcartegory(value);
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
         }
     };
 
@@ -270,7 +292,7 @@ function Products() {
         setLoadingCate(true);
         try {
             const response = await instance.get(`sub-categories?category=${categoryId}`);
-            setSubCategoriesFatch(response?.data?.data);
+            setSubCategoriesFatch(response?.data?.data || []);
         } catch (error) {
             console.error("Fetch failed:", error);
             setSubCategoriesFatch([]); // Clear on error
@@ -288,21 +310,36 @@ function Products() {
             form.append("name", formData.name);
             form.append("fit", formData.fit);
             form.append("care", formData.care);
-            form.append("price", formData.price);
+            form.append("price", formData.price || "");
+            form.append("discount_price", formData.discount_price || "");
+            form.append("discount_amount", formData.discount_amount || "");
             form.append("description", formData.description);
             form.append("category_id", formData.category_id);
             form.append("sub_category_id", formData.sub_category_id);
-            form.append("isNew", formData.isNew);
+            // Convert boolean to string "1" or "0" for FormData (Laravel will convert it to boolean)
+            form.append("isNew", formData.isNew ? "1" : "0");
 
-            formData.size_guides.forEach((size, index) => {
+            // Filter out empty size guides before sending
+            const validSizeGuides = formData.size_guides.filter(
+                (size) => size.name && size.name.trim() !== "" && 
+                         size.chest && size.chest.trim() !== "" && 
+                         size.body && size.body.trim() !== ""
+            );
+            
+            validSizeGuides.forEach((size, index) => {
                 form.append(`size_guides[${index}][name]`, size.name);
                 form.append(`size_guides[${index}][chest]`, size.chest);
                 form.append(`size_guides[${index}][body]`, size.body);
             });
 
-            formData.tags.forEach((tag, index) => {
+            // Filter out empty tags before sending
+            const validTags = formData.tags.filter(
+                (tag) => tag.name && tag.name.trim() !== ""
+            );
+            
+            validTags.forEach((tag, index) => {
                 form.append(`tags[${index}][name]`, tag.name);
-                form.append(`tags[${index}][description]`, tag.description);
+                form.append(`tags[${index}][description]`, tag.description || "");
             });
 
             formData.availability.forEach((avail, index) => {
@@ -363,10 +400,13 @@ function Products() {
             fit: "",
             care: "",
             price: "",
+            discount_price: "",
+            discount_amount: "",
             description: "",
             tags: [{ name: '', description: '' }],
             size_guides: [{ name: "", chest: "", body: "" }],
             availability: [{ size_id: "", color_id: "", quantity: 0 }],
+            isNew: true,
         });
         setIsEditMode(false);
         setSlidersUpdateId("");
@@ -591,9 +631,31 @@ function Products() {
                             size="small"
                             value={formData.price}
                             onChange={handleInputChange}
-                            placeholder="Enter your name"
+                            placeholder="Enter product price"
                             fullWidth
                         />
+                        <Stack direction={"row"} spacing={1}>
+                            <TextField
+                                label="Discount Price"
+                                name="discount_price"
+                                size="small"
+                                value={formData.discount_price}
+                                onChange={handleInputChange}
+                                placeholder="Enter discount price"
+                                fullWidth
+                                helperText="Price after discount"
+                            />
+                            <TextField
+                                label="Discount Amount"
+                                name="discount_amount"
+                                size="small"
+                                value={formData.discount_amount}
+                                onChange={handleInputChange}
+                                placeholder="Enter discount amount"
+                                fullWidth
+                                helperText="Discount percentage or fixed amount"
+                            />
+                        </Stack>
                         <TextEditor
                             value={formData.description}
                             placeholder={"Enter your description"}
@@ -607,8 +669,11 @@ function Products() {
                                 value={formData.category_id}
                                 onChange={handleInputChange}
                                 MenuProps={{ PaperProps: { style: { maxHeight: 224 } } }}
-
+                                displayEmpty
                             >
+                                <MenuItem value="" disabled>
+                                    Select Category
+                                </MenuItem>
                                 {categoriesFatch?.map((cate) => (
                                     <MenuItem key={cate.id} value={cate.id}>{cate.name}</MenuItem>
                                 ))}
@@ -622,18 +687,24 @@ function Products() {
                                 onChange={handleInputChange}
                                 MenuProps={{ PaperProps: { style: { maxHeight: 224 } } }}
                                 disabled={!formData.category_id || loadingCate}
-
+                                displayEmpty
                             >
-                                {loadingCate ? (
-                                    <MenuItem disabled>Loading subcategories...</MenuItem>
-                                ) : (
-                                    subCategoriesFatch?.map((subCategor) => (
-                                        <MenuItem key={subCategor.id} value={subCategor.id}>
-                                            {subCategor.name}
-                                        </MenuItem>
-                                    ))
-                                )}
-                            </Select> </Stack>
+                                <MenuItem value="" disabled>
+                                    {!formData.category_id 
+                                        ? "Select category first" 
+                                        : loadingCate 
+                                        ? "Loading subcategories..." 
+                                        : subCategoriesFatch?.length === 0
+                                        ? "No subcategories available"
+                                        : "Select Sub Category"}
+                                </MenuItem>
+                                {!loadingCate && subCategoriesFatch?.map((subCategor) => (
+                                    <MenuItem key={subCategor.id} value={subCategor.id}>
+                                        {subCategor.name}
+                                    </MenuItem>
+                                ))}
+                            </Select> 
+                        </Stack>
                         <Typography variant="body1" className="Medium" color="initial">Tags :</Typography>
                         {formData?.tags?.map((item, index) => (
                             <Stack key={index} direction={"column"} spacing={2}>
@@ -787,15 +858,19 @@ function Products() {
                             >
                                 Add Size Guide
                             </Button>
-                            <Stack direction={"row"} alignItems={"center"} spacing={1}> New Arrival product  <Switch
-                                checked={formData.isNew}
-                                onChange={() =>
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        isNew: false, 
-                                    }))
-                                }
-                            />
+                            <Stack direction={"row"} alignItems={"center"} spacing={1}> 
+                                <Typography variant="body2" className="Medium">
+                                    New Arrival product
+                                </Typography>
+                                <Switch
+                                    checked={formData.isNew}
+                                    onChange={(e) =>
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            isNew: e.target.checked, 
+                                        }))
+                                    }
+                                />
                             </Stack>
                         </Stack>
                         <Button
