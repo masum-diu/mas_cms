@@ -144,6 +144,59 @@ function Products() {
         const categoryId = item.category?.id || "";
         const subCategoryId = item.subCategory?.id || "";
         
+        // Handle size guides - check multiple possible property names
+        // Laravel returns hasMany relationships as the method name (sizeGuide)
+        let sizeGuidesData = [];
+        
+        // Check if sizeGuide exists and is an array/collection
+        if (item.sizeGuide) {
+            if (Array.isArray(item.sizeGuide)) {
+                sizeGuidesData = item.sizeGuide;
+            } else if (item.sizeGuide && typeof item.sizeGuide === 'object') {
+                // If it's an object, try to convert to array
+                sizeGuidesData = Object.values(item.sizeGuide);
+            }
+        } else if (item.size_guide) {
+            if (Array.isArray(item.size_guide)) {
+                sizeGuidesData = item.size_guide;
+            } else if (typeof item.size_guide === 'object') {
+                sizeGuidesData = Object.values(item.size_guide);
+            }
+        } else if (item.sizeGuides) {
+            if (Array.isArray(item.sizeGuides)) {
+                sizeGuidesData = item.sizeGuides;
+            } else if (typeof item.sizeGuides === 'object') {
+                sizeGuidesData = Object.values(item.sizeGuides);
+            }
+        }
+        
+        // Format size guides - ensure we have at least one empty entry if none exist
+        // Filter out any invalid entries and map to the correct format
+        const formattedSizeGuides = sizeGuidesData && Array.isArray(sizeGuidesData) && sizeGuidesData.length > 0 
+            ? sizeGuidesData
+                .filter(sg => sg && (sg.name || sg.chest || sg.body)) // Filter out completely empty entries
+                .map(sg => ({
+                    name: sg?.name || "",
+                    chest: sg?.chest || "",
+                    body: sg?.body || ""
+                }))
+            : [];
+        
+        // If no valid size guides, add one empty entry
+        if (formattedSizeGuides.length === 0) {
+            formattedSizeGuides.push({ name: "", chest: "", body: "" });
+        }
+        
+        // Handle availability - ensure proper format
+        const availabilityData = item.availability || [];
+        const formattedAvailability = availabilityData.length > 0
+            ? availabilityData.map(avail => ({
+                size_id: avail.size_id || "",
+                color_id: avail.color_id || "",
+                quantity: avail.quantity || 0
+            }))
+            : [{ size_id: "", color_id: "", quantity: 0 }];
+        
         setFormData({
             category_id: categoryId,
             sub_category_id: subCategoryId,
@@ -155,8 +208,8 @@ function Products() {
             name: item.name || "",
             description: item.description || "",
             tags: item.tags?.length > 0 ? item.tags : [{ name: '', description: '' }],
-            size_guides: item.sizeGuides || [{ name: "", chest: "", body: "" }],
-            availability: item.availability || [{ size_id: "", color_id: "", quantity: 0 }],
+            size_guides: formattedSizeGuides,
+            availability: formattedAvailability,
             isNew: item.isNew !== undefined ? item.isNew : true,
         });
 
