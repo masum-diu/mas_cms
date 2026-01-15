@@ -59,6 +59,8 @@ function Products() {
         price: "",
         discount_price: "",
         discount_amount: "",
+        size_column_name_one: "",
+        size_column_name_two: "",
         tags: [{ name: '', description: '' }],
         size_guides: [{ name: "", chest: "", body: "" }],
         availability: [{ size_id: "", color_id: "", quantity: 0 }],
@@ -205,6 +207,8 @@ function Products() {
             price: item.price || "",
             discount_price: item.discount_price || "",
             discount_amount: item.discount_amount || "",
+            size_column_name_one: item.size_column_name_one || "",
+            size_column_name_two: item.size_column_name_two || "",
             name: item.name || "",
             description: item.description || "",
             tags: item.tags?.length > 0 ? item.tags : [{ name: '', description: '' }],
@@ -253,6 +257,8 @@ function Products() {
             price: "",
             discount_price: "",
             discount_amount: "",
+            size_column_name_one: "",
+            size_column_name_two: "",
             description: "",
             tags: [{ name: '', description: '' }],
             size_guides: [{ name: "", chest: "", body: "" }],
@@ -366,6 +372,8 @@ function Products() {
             form.append("price", formData.price || "");
             form.append("discount_price", formData.discount_price || "");
             form.append("discount_amount", formData.discount_amount || "");
+            form.append("size_column_name_one", formData.size_column_name_one || "");
+            form.append("size_column_name_two", formData.size_column_name_two || "");
             form.append("description", formData.description);
             form.append("category_id", formData.category_id);
             form.append("sub_category_id", formData.sub_category_id);
@@ -455,6 +463,8 @@ function Products() {
             price: "",
             discount_price: "",
             discount_amount: "",
+            size_column_name_one: "",
+            size_column_name_two: "",
             description: "",
             tags: [{ name: '', description: '' }],
             size_guides: [{ name: "", chest: "", body: "" }],
@@ -707,6 +717,26 @@ function Products() {
                                 placeholder="Enter discount amount"
                                 fullWidth
                                 helperText="Discount percentage or fixed amount"
+                            />
+                        </Stack>
+                        <Stack direction={"row"} spacing={1}>
+                            <TextField
+                                label="Size Column Name One"
+                                name="size_column_name_one"
+                                size="small"
+                                value={formData.size_column_name_one}
+                                onChange={handleInputChange}
+                                placeholder="Enter size column name one"
+                                fullWidth
+                            />
+                            <TextField
+                                label="Size Column Name Two"
+                                name="size_column_name_two"
+                                size="small"
+                                value={formData.size_column_name_two}
+                                onChange={handleInputChange}
+                                placeholder="Enter size column name two"
+                                fullWidth
                             />
                         </Stack>
                         <TextEditor
